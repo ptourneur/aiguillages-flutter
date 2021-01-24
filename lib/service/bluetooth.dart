@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:aiguillages/enums/custom_bluetooth_state.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -10,7 +11,9 @@ class Bluetooth {
   final StreamController<CustomBluetoothState> _bluetoothStateController =
       StreamController<CustomBluetoothState>();
 
-  static const String DEVICE_ID = 'A4:DA:32:52:01:03';
+  Stream<List<int>> stream;
+
+  static const String DEVICE_ID = 'AC:67:B2:05:22:FE';
   static const String SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
   static const String PROPERTY_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
@@ -41,11 +44,10 @@ class Bluetooth {
                   for (final BluetoothCharacteristic characteristic
                       in service.characteristics) {
                     if (characteristic.uuid.toString() == PROPERTY_UUID) {
-                      characteristic
-                          .setNotifyValue(!characteristic.isNotifying);
+                      characteristic.setNotifyValue(true);
                       characteristic.value.listen((List<int> dataReceived) {
-                        print('received ' + dataReceived.toString());
-                        updateRailway(dataReceived);
+                        print('received ' + String.fromCharCodes(dataReceived));
+                        updateRailway(String.fromCharCodes(dataReceived));
                       });
                     }
                   }
@@ -79,8 +81,7 @@ class Bluetooth {
         for (final BluetoothCharacteristic characteristic
             in service.characteristics) {
           if (characteristic.uuid.toString() == PROPERTY_UUID) {
-            print(command);
-            characteristic.write(<int>[int.parse(command)]);
+            characteristic.write(command.codeUnits);
           }
         }
       }

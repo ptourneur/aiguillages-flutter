@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class Railway extends ChangeNotifier {
   Railway() {
     switchList = _initializeSwitch();
-    bluetooth.connectArduino((List<int> id) => updateSwitch(id));
+    bluetooth.connectArduino((String id) => updateSwitch(id));
   }
 
   Bluetooth bluetooth = Bluetooth();
@@ -19,18 +19,16 @@ class Railway extends ChangeNotifier {
     bluetooth.sendCommand('1$id${trainSwitch.isLinkedToCurveBranch ? 0 : 1}');
   }
 
-  void updateSwitch(List<int> dataReceived) {
-    for (final int command in dataReceived) {
-      if (command.toString().length == 3) {
-        final int id = int.parse(command.toString()[1]);
+  void updateSwitch(String dataReceived) {
+      if (dataReceived.length == 3) {
+        final int id = int.parse(dataReceived[1]);
         final bool isLinkedToCurveBranch =
-            int.parse(command.toString()[2]) == 1;
+            int.parse(dataReceived[2]) == 1;
 
         switchList
             .firstWhere((TrainSwitch trainSwitch) => trainSwitch.id == id)
             .isLinkedToCurveBranch = isLinkedToCurveBranch;
       }
-    }
     notifyListeners();
   }
 
