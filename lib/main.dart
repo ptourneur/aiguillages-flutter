@@ -1,5 +1,6 @@
 import 'package:aiguillages/home_page.dart';
 import 'package:aiguillages/model/railway.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -14,16 +15,31 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.landscapeRight,
     ]);
 
+    final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
     return ChangeNotifierProvider<Railway>(
       create: (BuildContext context) => Railway(),
-      child: MaterialApp(
-        title: 'Aiguillage',
-        theme: ThemeData(
-            backgroundColor: Colors.black,
-            primarySwatch: Colors.blue,
-            disabledColor: Colors.black12,
-            primaryColor: Colors.green[800]),
-        home: HomePage(),
+      child: FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Erreur de connexion à firebase');
+          }
+
+          if (snapshot.connectionState == ConnectionState.done) {
+            return MaterialApp(
+              title: 'Aiguillage',
+              theme: ThemeData(
+                  backgroundColor: Colors.black,
+                  primarySwatch: Colors.blue,
+                  disabledColor: Colors.black12,
+                  primaryColor: Colors.green[800]),
+              home: HomePage(),
+            );
+          }
+
+          return const CircularProgressIndicator();
+        },
       ),
     );
   }
