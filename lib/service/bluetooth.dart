@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:aiguillages/enums/custom_bluetooth_state.dart';
+import 'package:aiguillages/model/duration.dart';
+import 'package:aiguillages/service/database.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class Bluetooth {
+  DatabaseService _databaseService;
   final FlutterBlue bluetoothInstance = FlutterBlue.instance;
 
   BluetoothDevice device;
@@ -56,6 +59,10 @@ class Bluetooth {
                     _bluetoothStateController.sink
                         .add(CustomBluetoothState.device_connected);
                     sendCommand('199');
+                    _databaseService = DatabaseService(bluetooth: this);
+                    _databaseService.start();
+                    _databaseService.duration.then((Duration duration) =>
+                        sendCommand('2_${duration.day}_${duration.night}'));
                   } else if (event == BluetoothDeviceState.disconnected) {
                     _bluetoothStateController.sink
                         .add(CustomBluetoothState.device_disconnected);
@@ -80,6 +87,7 @@ class Bluetooth {
         for (final BluetoothCharacteristic characteristic
             in service.characteristics) {
           if (characteristic.uuid.toString() == PROPERTY_UUID) {
+            print('send $command');
             characteristic.write(command.codeUnits);
           }
         }

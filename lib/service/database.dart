@@ -1,14 +1,21 @@
 import 'package:aiguillages/model/duration.dart';
+import 'package:aiguillages/service/bluetooth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
-  DatabaseService({this.uid});
+  DatabaseService({this.bluetooth});
 
-  final String uid;
+  final Bluetooth bluetooth;
 
   // collection reference
   final CollectionReference durationsCollection =
       FirebaseFirestore.instance.collection('durations');
+
+  void start() {
+    durationStream.forEach((Duration duration) {
+      bluetooth.sendCommand('2_${duration.day}_${duration.night}');
+    });
+  }
 
   Future<void> updateDuration(int night, int day) async {
     return await durationsCollection
@@ -16,10 +23,17 @@ class DatabaseService {
         .update(<String, dynamic>{'night': night, 'day': day});
   }
 
-  Future<Duration> getDuration() async {
-    final DocumentSnapshot doc =
+  Stream<Duration> get durationStream {
+    return durationsCollection.doc('IytuzQtT2Rh5H8DXXqny').snapshots().map(
+        (DocumentSnapshot doc) => Duration(
+            night: doc.data()['night'] as int, day: doc.data()['day'] as int));
+  }
+
+  Future<Duration> get duration async {
+    final DocumentSnapshot document =
         await durationsCollection.doc('IytuzQtT2Rh5H8DXXqny').get();
     return Duration(
-        night: doc.data()['night'] as int, day: doc.data()['day'] as int);
+        night: document.data()['night'] as int,
+        day: document.data()['day'] as int);
   }
 }

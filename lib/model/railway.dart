@@ -20,15 +20,14 @@ class Railway extends ChangeNotifier {
   }
 
   void updateSwitch(String dataReceived) {
-      if (dataReceived.length == 3) {
-        final int id = int.parse(dataReceived[1]);
-        final bool isLinkedToCurveBranch =
-            int.parse(dataReceived[2]) == 1;
+    if (dataReceived.length == 3) {
+      final int id = int.parse(dataReceived[1]);
+      final bool isLinkedToCurveBranch = int.parse(dataReceived[2]) == 1;
 
-        switchList
-            .firstWhere((TrainSwitch trainSwitch) => trainSwitch.id == id)
-            .isLinkedToCurveBranch = isLinkedToCurveBranch;
-      }
+      switchList
+          .firstWhere((TrainSwitch trainSwitch) => trainSwitch.id == id)
+          .isLinkedToCurveBranch = isLinkedToCurveBranch;
+    }
     notifyListeners();
   }
 
