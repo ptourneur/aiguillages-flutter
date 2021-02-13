@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
                   backgroundColor: Colors.black,
                   primarySwatch: Colors.blue,
                   disabledColor: Colors.black12,
-                  primaryColor: Colors.green[800]),
+                  primaryColor: Colors.white),
               home: HomePage(),
             );
           }

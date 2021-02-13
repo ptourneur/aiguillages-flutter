@@ -11,16 +11,16 @@ class Bluetooth {
 
   BluetoothDevice device;
   final StreamController<CustomBluetoothState> _bluetoothStateController =
-      StreamController<CustomBluetoothState>();
+      StreamController<CustomBluetoothState>.broadcast();
 
   Stream<List<int>> stream;
 
-  static const String DEVICE_ID = 'AC:67:B2:09:D0:9A';
+  static const String DEVICE_ID = '24:62:AB:F1:DB:DA';
   static const String SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
   static const String PROPERTY_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
   Stream<CustomBluetoothState> get stateStream =>
-      _bluetoothStateController.stream;
+      _bluetoothStateController.stream.asBroadcastStream();
 
   Future<void> connectArduino(Function updateRailway) async {
     bluetoothInstance.state.listen((BluetoothState state) async {

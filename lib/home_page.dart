@@ -1,4 +1,5 @@
 import 'package:aiguillages/bluetooth_icon.dart';
+import 'package:aiguillages/day_night_display.dart';
 import 'package:aiguillages/model/railway.dart';
 import 'package:aiguillages/railway_painter.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,11 @@ class HomePage extends StatelessWidget {
               top: MediaQuery.of(context).size.height * 0.20,
               left: 0,
               child: BluetoothIcon(Provider.of<Railway>(context).bluetooth)),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.01,
+            right: MediaQuery.of(context).size.height * 0.10,
+            child: DayNightDisplay(),
+          )
         ],
       ),
     );
